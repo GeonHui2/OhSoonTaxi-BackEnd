@@ -59,9 +59,13 @@ public class Reservation {
     @Column(nullable = false, length = 20)
     private String countersignWord;
     @Column(nullable = false, length = 200)
-    private Double latitude;
+    private Double startLatitude;
     @Column(nullable = false, length = 200)
-    private Double longitude;
+    private Double startLongitude;
+    @Column(nullable = false, length = 200)
+    private Double finishLatitude;
+    @Column(nullable = false, length = 200)
+    private Double finishLongitude;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -71,27 +75,26 @@ public class Reservation {
     private List<Participation> participations = new ArrayList<>();
 
     @Builder
-
-    public Reservation(String title, LocalDate reservationDate, LocalTime reservationTime, String startingPlace, String destination, Sex sex,
-                       LocalDateTime createdAt, ReservationStatus reservationStatus, Integer passengerNum, Integer currentNum, String challengeWord, String countersignWord, Double latitude, Double longitude, User user) {
+    public Reservation(String title, LocalDate reservationDate, LocalTime reservationTime, String startingPlace, String destination, Sex sex, Integer passengerNum, String challengeWord
+                       , Integer currentNum, String countersignWord, Double startLatitude, Double startLongitude, Double finishLatitude, Double finishLongitude, ReservationStatus reservationStatus, User user) {
         this.title = title;
         this.reservationDate = reservationDate;
         this.reservationTime = reservationTime;
         this.startingPlace = startingPlace;
         this.destination = destination;
         this.sex = sex;
-        this.createdAt = createdAt;
-        this.reservationStatus = reservationStatus;
-        this.passengerNum = passengerNum;
         this.currentNum = currentNum;
+        this.passengerNum = passengerNum;
         this.challengeWord = challengeWord;
         this.countersignWord = countersignWord;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.startLatitude = startLatitude;
+        this.startLongitude = startLongitude;
+        this.finishLatitude = finishLatitude;
+        this.finishLongitude = finishLongitude;
+        this.reservationStatus = reservationStatus;
         this.user = user;
     }
-
-    //== 연관 관계 메서드==//
+//== 연관 관계 메서드==//
 
     public void addParticipation(Participation participation){
         participations.add(participation);
@@ -116,5 +119,27 @@ public class Reservation {
     //인원 빼기
     public void subtractCurrentNum(){
         this.currentNum--;
+    }
+
+    //상태 변경
+    public void changeReservationStatus(ReservationStatus reservationStatus) {
+        this.reservationStatus = reservationStatus;
+    }
+
+    //게시글 참여 가능 상태 로직
+    public ReservationStatus checkStatus(Integer currentNum, Integer passengerNum) {
+        Double rate = Double.valueOf(currentNum * 100 / passengerNum);
+
+        if (currentNum.equals(passengerNum)){
+            return ReservationStatus.DEADLINE;
+        }
+        else if (rate <= 50) {
+            return ReservationStatus.POSSIBLE;
+        }
+        return ReservationStatus.IMMINENT;
+    }
+
+    public void changeStatus(ReservationStatus reservationStatus) {
+        this.reservationStatus = reservationStatus;
     }
 }

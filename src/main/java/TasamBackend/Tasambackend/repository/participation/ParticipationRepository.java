@@ -15,9 +15,14 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     Optional<Participation> findById(Long id);
     @Transactional
-    void deleteById(Long participationId);
+    void deleteById(Long id);
+
+    @Transactional
+    void delete(Participation participation);
     List<Participation> findAllByReservationId(Long reservationId);
     List<Participation> findAllByUser(User user);
 
     Optional<Participation> findByUserAndReservation(User user, Reservation reservation);
+
+    Boolean existsByUserAndReservation(User user, Reservation reservation);
 }

@@ -1,5 +1,6 @@
 package TasamBackend.Tasambackend.service.user;
 
+import TasamBackend.Tasambackend.dto.CheckIdDto;
 import TasamBackend.Tasambackend.dto.SignInDto;
 import TasamBackend.Tasambackend.dto.SignUpDto;
 import TasamBackend.Tasambackend.entity.user.RefreshToken;
@@ -30,15 +31,15 @@ public class UserService {
 
     //회원가입
     @Transactional
-    public Long signUp(SignUpDto signUpDto){
+    public Long signUp(SignUpDto user){
         Long id =userRepository.save(
                 User.builder()
-                        .uid(signUpDto.getUid())
-                        .password(signUpDto.getPassword())
-                        .name(signUpDto.getName())
-                        .phoneNum(signUpDto.getPhoneNum())
-                        .schoolNum(signUpDto.getSchoolNum())
-                        .sex(signUpDto.getSex())
+                        .uid(user.getUid())
+                        .password(passwordEncoder.encode(user.getPassword()))
+                        .name(user.getName())
+                        .phoneNum(user.getPhoneNum())
+                        .schoolNum(user.getSchoolNum())
+                        .sex(user.getSex())
                         .build())
                 .getId();
         return id;
@@ -56,6 +57,9 @@ public class UserService {
     //로그아웃
     @Transactional
     public Boolean signOut(String refreshToken, User user) {
+        if (!refreshTokenRepository.existsByRefreshToken(refreshToken))
+            return false;
+
         refreshTokenRepository.deleteByRefreshToken(refreshToken);
 
         logger.info(user.getUid() + " (id : " + user.getId() + ") logout");
@@ -65,10 +69,9 @@ public class UserService {
 
     //아이디 중복
     @Transactional
-    public Boolean checkUnique(String uid) {
-        Boolean result = userRepository.existsByUid(uid);
-
-        return result;
+    public Boolean checkUnique(CheckIdDto checkIdDto) {
+        Boolean result = userRepository.existsByUid(checkIdDto.getUid());
+        return !result;
     }
 
     //아이디 확인
@@ -81,7 +84,7 @@ public class UserService {
 
     //비밀번호 확인
     @Transactional
-    public boolean checkPassword(User member, SignInDto user) {
+    public boolean checkPassword(SignInDto user, User member) {
         return passwordEncoder.matches(user.getPassword(), member.getPassword());
     }
 }

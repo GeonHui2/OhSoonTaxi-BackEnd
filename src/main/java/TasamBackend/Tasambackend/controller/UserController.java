@@ -1,6 +1,7 @@
 package TasamBackend.Tasambackend.controller;
 
 import TasamBackend.Tasambackend.config.JwtTokenProvider;
+import TasamBackend.Tasambackend.dto.CheckIdDto;
 import TasamBackend.Tasambackend.dto.SignInDto;
 import TasamBackend.Tasambackend.dto.SignUpDto;
 import TasamBackend.Tasambackend.entity.user.User;
@@ -14,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +28,8 @@ public class UserController {
 
     //아이디 중복 확인
     @PostMapping("/checkUnique")
-    public ResponseEntity checkId(@RequestBody HashMap<String, String> param) {
-        String uid = param.get("uid");
-        Boolean result = userService.checkUnique(uid);
+    public ResponseEntity checkId(@RequestBody CheckIdDto checkIdDto) {
+        Boolean result = userService.checkUnique(checkIdDto);
 
         return result ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "사용가능한 아이디입니다."), HttpStatus.OK) :
@@ -54,9 +53,13 @@ public class UserController {
         if (member == null)
             return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "없는 사용자"), HttpStatus.OK);
 
-        Boolean isRight = userService.checkPassword(member, user);
+        Boolean isRight = userService.checkPassword(user, member);
         if (!isRight)
-            return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 비밀번호"), HttpStatus.OK);
+           return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 비밀번호"), HttpStatus.OK);
+
+        //if (!passwordEncoder.matches(member.getPassword(), user.getPassword())) {
+        //    return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 비밀번호"), HttpStatus.OK);
+        //}
 
         //액세스, 리프레시 토큰 발급 및 헤더 설정
         String accessToken = jwtTokenProvider.createAccessToken(member.getUid());
@@ -73,7 +76,7 @@ public class UserController {
 
     //로그아웃
     @PostMapping("/signOut")
-    public ResponseEntity signOut(@RequestHeader("RefreshToken") String refreshToken, @RequestAttribute String userUid) {
+    public ResponseEntity signOut(@RequestHeader("RefreshToken") String refreshToken, @RequestParam(name = "userUid") String userUid) {
         refreshToken = refreshToken.substring(7);
         User member = userService.findUserByUid(userUid);
         Boolean existAndOut = userService.signOut(refreshToken, member);

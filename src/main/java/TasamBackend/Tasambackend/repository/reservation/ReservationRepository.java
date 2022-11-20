@@ -12,13 +12,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Reservation save(Reservation reservation);
     Optional<Reservation> findById(Long id);
-    List<Reservation> findAllByReservationDate(LocalDate date);
 
-    //List<Reservation> findAllByUid(String userUid);
-    //List<Reservation> findAllById(Long id);
+
+    //List<Reservation> findAllByReservationDate(LocalDate date);
+    List<Reservation> findAllByReservationDate(LocalDate reservationDate);
+
     List<Reservation> findAllByUser(User user);
 
-    //@Transactional
-    //Optional<Reservation> findByParticipationId(Long participationId);
-
+    List<Reservation> findByTitleContaining(String keyword);
 }

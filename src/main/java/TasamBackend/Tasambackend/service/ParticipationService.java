@@ -1,10 +1,9 @@
 package TasamBackend.Tasambackend.service;
 
 import TasamBackend.Tasambackend.dto.AddParticipationDto;
-import TasamBackend.Tasambackend.dto.response.ListMyParticipationDto;
 import TasamBackend.Tasambackend.entity.Participation;
 import TasamBackend.Tasambackend.entity.Reservation;
-import TasamBackend.Tasambackend.entity.ReservationStatus;
+import TasamBackend.Tasambackend.entity.Sex;
 import TasamBackend.Tasambackend.entity.user.User;
 import TasamBackend.Tasambackend.repository.participation.ParticipationRepository;
 import TasamBackend.Tasambackend.repository.reservation.ReservationRepository;
@@ -14,10 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import static TasamBackend.Tasambackend.entity.ReservationStatus.DEADLINE;
 
 
 @Service
@@ -25,48 +27,52 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ParticipationService {
 
-    UserRepository userRepository;
-    ReservationRepository reservationRepository;
-    ParticipationRepository participationRepository;
+    private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
+    private final ParticipationRepository participationRepository;
 
     //참여 추가
     @Transactional
     public Long addParticipation(AddParticipationDto addParticipationDto, String userUid) throws IOException {
         Reservation currReservation = reservationRepository.findById(addParticipationDto.getReservationId()).get();
-        User currParticipationUser = userRepository.findByUid(userUid).get();
+        User addUser = userRepository.findByUid(userUid).get();
 
-        if (currReservation.getReservationStatus() == ReservationStatus.DEADLINE)
-            return null;
+        if (currReservation.getSex().equals(Sex.MAN))
+            if (addUser.getSex().equals(Sex.WOMAN))
+                return null;
 
-        Participation participation = participationRepository.save(
+        else if (currReservation.getSex().equals(Sex.WOMAN))
+            if (addUser.getSex().equals(Sex.MAN))
+                return null;
+
+        Participation addParticipation = participationRepository.save(
                 Participation.builder()
-                        .user(currParticipationUser)
+                        .user(addUser)
                         .reservation(currReservation)
                         .seatPosition(addParticipationDto.getSeatPosition())
                         .build()
         );
 
         currReservation.addCurrentNum();
-        currReservation.addParticipation(participation);
+        currReservation.addParticipation(addParticipation);
+        currReservation.changeStatus(currReservation.checkStatus(currReservation.getCurrentNum(), currReservation.getPassengerNum()));
 
-        return participation.getId();
+        return addParticipation.getId();
     }
 
     //참여 취소
     @Transactional
-    public Long deleteParticipation(Long reservationId, String userUid) throws IOException{
+    public Boolean deleteParticipation(Long reservationId, String userUid) throws IOException{
         User addUser = userRepository.findByUid(userUid).get();
-        Participation currParticipation = participationRepository.findById(reservationId).get();
-
-        if (currParticipation.getUser() != addUser)
-            return null;
+        Reservation reservation = reservationRepository.findById(reservationId).get();
+        Participation currParticipation = participationRepository.findByUserAndReservation(addUser, reservation).get();
 
         currParticipation.getReservation().subtractCurrentNum();
         currParticipation.getReservation().subParticipation(currParticipation);
 
-        participationRepository.deleteById(currParticipation.getId());
+        participationRepository.delete(currParticipation);
 
-        return currParticipation.getId();
+        return Boolean.TRUE;
     }
 
     //참여자 목록 조회
@@ -90,28 +96,35 @@ public class ParticipationService {
 
     //참여했는지 확인
     @Transactional
-    public Long checkParticipation(Long reservationId, String userUid) throws IOException {
+    public Boolean checkParticipation(Long reservationId, String userUid) throws IOException {
         User addUser = userRepository.findByUid(userUid).get();
         Reservation currReservation = reservationRepository.findById(reservationId).get();
-        Participation currParticipation = participationRepository.findByUserAndReservation(addUser, currReservation).get();
+        Boolean check = participationRepository.existsByUserAndReservation(addUser, currReservation);
 
-        if (currParticipation.getUser() != addUser)
-            return null;
-
-        return currParticipation.getId();
+        return check;
     }
 
-    //내가 참여한 거 조회
+    // 참여 조회 로직
     @Transactional
-    public List<ListMyParticipationDto> getAllMyParticipationList(String userUid) {
-        User addUser = userRepository.findByUid(userUid).get();
-        List<ListMyParticipationDto> participationList = new ArrayList<>();
-        List<Participation> originParticipations = participationRepository.findAllByUser(addUser);
+    public Integer checkParticipationCheck(Long reservationId, String userUid) throws IOException {
+        Reservation currReservation = reservationRepository.findById(reservationId).get();
+        Boolean check = checkParticipation(reservationId, userUid);
+        LocalDateTime dateTime = LocalDateTime.of(currReservation.getReservationDate(), currReservation.getReservationTime());
+        LocalDateTime passphraseDateTime = LocalDateTime.of(currReservation.getReservationDate(), currReservation.getReservationTime().minusMinutes(30));
 
-        for (Participation p : originParticipations) {
-            ListMyParticipationDto listMyParticipationDto = new ListMyParticipationDto();
+        if (check.equals(Boolean.TRUE)) {
+            if (LocalDateTime.now().isBefore(dateTime) && LocalDateTime.now().isAfter(passphraseDateTime))
+                return 2;
+
+            else if (LocalDateTime.now().isBefore(passphraseDateTime))
+                return 3;
+
+            return 4;
         }
 
-        return null;
+        if (currReservation.getReservationStatus().equals(DEADLINE) || LocalDateTime.now().isAfter(dateTime))
+            return 4;
+
+        return 1;
     }
 }

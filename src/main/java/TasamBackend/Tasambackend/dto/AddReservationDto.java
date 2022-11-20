@@ -1,6 +1,5 @@
 package TasamBackend.Tasambackend.dto;
 
-import TasamBackend.Tasambackend.entity.ReservationStatus;
 import TasamBackend.Tasambackend.entity.Sex;
 import lombok.Getter;
 
@@ -13,13 +12,15 @@ public class AddReservationDto {
     private String title;
     private LocalDate reserveDate;
     private LocalTime reserveTime;
-    private String starting;
+    private String startingPlace;
     private String destination;
     private Sex sex;
-    private ReservationStatus reservationStatus;
+    private LocalTime createdAt;
     private Integer passengerNum;
     private String challengeWord;
     private String countersignWord;
-    private Double latitude;
-    private Double longitude;
+    private Double startLatitude;
+    private Double startLongitude;
+    private Double finishLatitude;
+    private Double finishLongitude;
 }

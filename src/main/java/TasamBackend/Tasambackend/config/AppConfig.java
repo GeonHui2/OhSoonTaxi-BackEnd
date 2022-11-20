@@ -1,6 +1,5 @@
 package TasamBackend.Tasambackend.config;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,10 +26,7 @@ public class AppConfig {
         @PersistenceContext
         private EntityManager em;
 
-        @Bean
-        JPAQueryFactory jpaQueryFactory() {
-            return new JPAQueryFactory(em);
-        }
+
     }
 
 }
