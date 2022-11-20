@@ -109,12 +109,6 @@ public class ReservationController {
                 new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.OK);
     }
 
-    //게시글 검색 - 제목 리스트 조회
-    //@GetMapping("/search/title")
-    //public ResponseEntity seachTitle(@RequestParam(value = "keyword") String keyword) throws IOException {
-        //List searchTitleList = reservationService.searchTitle(keyword);
-    //}
-
     //게시글 검색 - 게시글 리스트 조회
     @GetMapping("/search/list")
     public ResponseEntity searchList(@RequestParam(value = "keyword") String keyword) throws IOException{
