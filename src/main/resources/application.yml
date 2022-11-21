@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://43.200.49.215/ohsoontaxi
+    url: jdbc:mariadb://3.35.148.244:3306/ohsoontaxi
     username: ohsoontaxi
     password: 20181549
   jpa:
