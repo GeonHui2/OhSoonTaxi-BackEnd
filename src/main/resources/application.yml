@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/tasam
-    username: root
+    url: jdbc:mariadb://43.200.49.215/ohsoontaxi
+    username: ohsoontaxi
     password: 20181549
   jpa:
     hibernate:
