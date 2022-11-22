@@ -117,6 +117,7 @@ public class ReservationService {
         currentReservationInfoDto.setUserUid(currentReservation.getUser().getUid());
         currentReservationInfoDto.setName(addUser.getName());
         currentReservationInfoDto.setSchoolNum(addUser.getSchoolNum());
+        currentReservationInfoDto.setUserSex(addUser.getSex());
         currentReservationInfoDto.setParticipations(participationList);
 
         return currentReservationInfoDto;

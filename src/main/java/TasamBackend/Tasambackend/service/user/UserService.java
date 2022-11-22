@@ -3,6 +3,7 @@ package TasamBackend.Tasambackend.service.user;
 import TasamBackend.Tasambackend.dto.CheckIdDto;
 import TasamBackend.Tasambackend.dto.SignInDto;
 import TasamBackend.Tasambackend.dto.SignUpDto;
+import TasamBackend.Tasambackend.dto.response.MyInfoDto;
 import TasamBackend.Tasambackend.entity.user.RefreshToken;
 import TasamBackend.Tasambackend.entity.user.User;
 import TasamBackend.Tasambackend.filter.CustomAuthenticationEntryPoint;
@@ -11,12 +12,16 @@ import TasamBackend.Tasambackend.repository.reservation.ReservationRepository;
 import TasamBackend.Tasambackend.repository.user.RefreshTokenRepository;
 import TasamBackend.Tasambackend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -74,11 +79,19 @@ public class UserService {
         return !result;
     }
 
-    //아이디 확인
+    //로그인 확인
     @Transactional
-    public User findUserByUid(String user) {
-        User member = userRepository.findByUid(user).get();
+    public Optional<User> findUserByUidAndPassword(String uid, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        Optional<User> member= userRepository.findByUidAndAndPassword(uid, encodedPassword);
 
+        return member;
+    }
+
+    //유저 확인
+    @Transactional
+    public Optional<User> findUserByUid(String uid) {
+        Optional<User> member = userRepository.findByUid(uid);
         return member;
     }
 
@@ -86,5 +99,18 @@ public class UserService {
     @Transactional
     public boolean checkPassword(SignInDto user, User member) {
         return passwordEncoder.matches(user.getPassword(), member.getPassword());
+    }
+
+    //내 정보 조회
+    @Transactional
+    public MyInfoDto myInfoDto(String uid) {
+        User member = userRepository.findByUid(uid).get();
+        MyInfoDto myInfoDto = new MyInfoDto();
+
+        myInfoDto.setName(member.getName());
+        myInfoDto.setSex(member.getSex());
+        myInfoDto.setSchoolNum(member.getSchoolNum());
+
+        return myInfoDto;
     }
 }

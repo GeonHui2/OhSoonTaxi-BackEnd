@@ -39,7 +39,7 @@ public class ParticipationController {
 
         return aBoolean.equals(Boolean.TRUE) ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "참여 삭제 완료"), HttpStatus.OK):
-                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.OK);
+                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.BAD_REQUEST);
     }
 
     //참여 조회 로직

@@ -33,5 +33,6 @@ public class CurrentReservationInfoDto {
     private String userUid;
     private String name;
     private String schoolNum;
+    private Sex userSex;
     private List<ParticipationListDto> participations;
 }

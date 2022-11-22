@@ -45,7 +45,7 @@ public class ReservationController {
 
         return id != null ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "게시글 삭제 완료"), HttpStatus.OK):
-                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.OK);
+                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.BAD_REQUEST);
     }
 
     //게시글 조회
@@ -76,7 +76,7 @@ public class ReservationController {
 
         return passphraseResponseDto != null ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "암구호 조회 완료", passphraseResponseDto), HttpStatus.OK):
-                new ResponseEntity(DefaultRes.res(StatusCode.OK, "조회된 암구호 없음", passphraseResponseDto), HttpStatus.BAD_REQUEST);
+                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "조회된 암구호 없음", passphraseResponseDto), HttpStatus.BAD_REQUEST);
     }
 
     //마이페이지 내가 만든 게시글 조회
@@ -86,10 +86,10 @@ public class ReservationController {
 
         return myReservations.size() != 0 ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "게시글 조회 완료", myReservations), HttpStatus.OK) :
-                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "조회된 게시글 없음", new ArrayList()), HttpStatus.BAD_REQUEST);
+                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "조회된 게시글 없음", new ArrayList()), HttpStatus.OK);
     }
 
-    //내가 참여한 약속 조회
+    //내가 참여한 게시글 조회
     @GetMapping("/list/participations")
     public ResponseEntity getMyParticipations(@RequestParam(name = "userUid") String userUid) throws IOException {
         List myParticipations = reservationService.getAllMyParticipationList(userUid);
@@ -106,7 +106,7 @@ public class ReservationController {
 
         return id != null ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "게시글 제목 수정 완료"), HttpStatus.OK) :
-                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.OK);
+                new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.BAD_REQUEST);
     }
 
     //게시글 검색 - 게시글 리스트 조회
