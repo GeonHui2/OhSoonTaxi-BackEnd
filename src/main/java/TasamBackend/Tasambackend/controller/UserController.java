@@ -1,7 +1,6 @@
 package TasamBackend.Tasambackend.controller;
 
 import TasamBackend.Tasambackend.config.JwtTokenProvider;
-import TasamBackend.Tasambackend.dto.CheckIdDto;
 import TasamBackend.Tasambackend.dto.SignInDto;
 import TasamBackend.Tasambackend.dto.SignUpDto;
 import TasamBackend.Tasambackend.dto.response.MyInfoDto;
@@ -10,7 +9,6 @@ import TasamBackend.Tasambackend.response.DefaultRes;
 import TasamBackend.Tasambackend.response.StatusCode;
 import TasamBackend.Tasambackend.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -29,9 +26,9 @@ public class UserController {
 
 
     //아이디 중복 확인
-    @PostMapping("/checkUnique")
-    public ResponseEntity checkId(@RequestBody CheckIdDto checkIdDto) {
-        Boolean result = userService.checkUnique(checkIdDto);
+    @GetMapping("/checkUnique")
+    public ResponseEntity checkUid(@RequestParam(name = "uid") String uid) {
+        Boolean result = userService.checkUnique(uid);
 
         return result ?
                 new ResponseEntity(DefaultRes.res(StatusCode.OK, "사용가능한 아이디입니다."), HttpStatus.OK) :

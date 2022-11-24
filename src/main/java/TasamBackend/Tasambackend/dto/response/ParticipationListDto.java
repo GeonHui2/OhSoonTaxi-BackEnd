@@ -8,4 +8,5 @@ import lombok.Setter;
 public class ParticipationListDto {
     private String schoolNum;
     private String name;
+    private Integer seatPosition;
 }

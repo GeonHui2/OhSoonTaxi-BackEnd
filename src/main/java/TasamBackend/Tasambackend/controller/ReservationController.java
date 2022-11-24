@@ -34,7 +34,7 @@ public class ReservationController {
         Long id = reservationService.addReservation(addReservationDto, userUid);
 
         return id != null ?
-                new ResponseEntity(DefaultRes.res(StatusCode.OK, "택시 예약 생성 완료"), HttpStatus.OK):
+                new ResponseEntity(DefaultRes.res(StatusCode.OK, "택시 예약 생성 완료", id), HttpStatus.OK):
                 new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, "잘못된 요청"), HttpStatus.BAD_REQUEST);
     }
 

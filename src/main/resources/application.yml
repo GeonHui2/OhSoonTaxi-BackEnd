@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://3.39.165.84:3306/ohsoontaxi
+    username: ohsoontaxi
+    password: 20181549
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: ture
+        dialect:
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    org.hibernate.sql: debug

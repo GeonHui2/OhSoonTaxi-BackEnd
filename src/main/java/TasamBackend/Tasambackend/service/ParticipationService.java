@@ -55,7 +55,7 @@ public class ParticipationService {
 
         currReservation.addCurrentNum();
         currReservation.addParticipation(addParticipation);
-        currReservation.changeStatus(currReservation.checkStatus(currReservation.getCurrentNum(), currReservation.getPassengerNum()));
+        currReservation.changeReservationStatus();
 
         return addParticipation.getId();
     }
@@ -64,11 +64,12 @@ public class ParticipationService {
     @Transactional
     public Boolean deleteParticipation(Long reservationId, String userUid) throws IOException{
         User addUser = userRepository.findByUid(userUid).get();
-        Reservation reservation = reservationRepository.findById(reservationId).get();
-        Participation currParticipation = participationRepository.findByUserAndReservation(addUser, reservation).get();
+        Reservation currReservation = reservationRepository.findById(reservationId).get();
+        Participation currParticipation = participationRepository.findByUserAndReservation(addUser, currReservation).get();
 
         currParticipation.getReservation().subtractCurrentNum();
         currParticipation.getReservation().subParticipation(currParticipation);
+        currReservation.changeReservationStatus();
 
         participationRepository.delete(currParticipation);
 

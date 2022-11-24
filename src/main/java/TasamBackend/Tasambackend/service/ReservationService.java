@@ -94,6 +94,7 @@ public class ReservationService {
             ParticipationListDto participationListDto = new ParticipationListDto();
             participationListDto.setName(p.getUser().getName());
             participationListDto.setSchoolNum(p.getUser().getSchoolNum());
+            participationListDto.setSeatPosition(p.getSeatPosition());
 
             participationList.add(participationListDto);
         }

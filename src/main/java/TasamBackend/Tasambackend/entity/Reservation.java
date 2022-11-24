@@ -121,24 +121,24 @@ public class Reservation {
         this.currentNum--;
     }
 
-    //상태 변경
-    public void changeReservationStatus(ReservationStatus reservationStatus) {
-        this.reservationStatus = reservationStatus;
-    }
-
     //게시글 참여 가능 상태 로직
-    public ReservationStatus checkStatus(Integer currentNum, Integer passengerNum) {
-        Double rate = Double.valueOf(currentNum * 100 / passengerNum);
+    public void changeReservationStatus(){
+        if(this.passengerNum*0.5 <= this.currentNum && this.currentNum < this.passengerNum )  {
+            this.changeStatus(ReservationStatus.IMMINENT);
+        }
+        else if(this.currentNum == this.passengerNum){
+            this.changeStatus(ReservationStatus.DEADLINE);
+        }
+        else {
+            this.changeStatus(ReservationStatus.POSSIBLE);
+        }
 
-        if (currentNum.equals(passengerNum)){
-            return ReservationStatus.DEADLINE;
-        }
-        else if (rate <= 50) {
-            return ReservationStatus.POSSIBLE;
-        }
-        return ReservationStatus.IMMINENT;
+
+
     }
 
+
+    //상태 변경
     public void changeStatus(ReservationStatus reservationStatus) {
         this.reservationStatus = reservationStatus;
     }

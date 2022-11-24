@@ -1,6 +1,5 @@
 package TasamBackend.Tasambackend.service.user;
 
-import TasamBackend.Tasambackend.dto.CheckIdDto;
 import TasamBackend.Tasambackend.dto.SignInDto;
 import TasamBackend.Tasambackend.dto.SignUpDto;
 import TasamBackend.Tasambackend.dto.response.MyInfoDto;
@@ -74,8 +73,8 @@ public class UserService {
 
     //아이디 중복
     @Transactional
-    public Boolean checkUnique(CheckIdDto checkIdDto) {
-        Boolean result = userRepository.existsByUid(checkIdDto.getUid());
+    public Boolean checkUnique(String uid) {
+        Boolean result = userRepository.existsByUid(uid);
         return !result;
     }
 
