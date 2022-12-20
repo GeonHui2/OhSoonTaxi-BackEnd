@@ -1,6 +1,6 @@
 <h1 align="center">오늘의 순천향 택시</h1>
 
-<p align="center"><img src="./app/src/main/res/drawable-v24/ost_logo.png" width="200" height="200"/></p>
+<p align="center"><img src="ost_logo.png" width="200" height="200"/></p>
 
 
 # 💡 Topic
