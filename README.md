@@ -17,19 +17,16 @@
 
 ## 🛠️ ****Tech Stack****
 
-- Kotlin
-- Data binding
-- Coroutine
-- Retrofit2 + OkHttp
-- Flow
-- Debounce
-- DataStore
-- Kakao Map
-- Kakao Local
+- Spring Boot
+- Mysql
+- Spring Data JPA
+- Spring Security
+- AWS LightSail
+
 
 ## ⚙️ Architecture
 
-- MVVM
+- MVC
 
 ## 👨‍👩‍👧‍👦 Owner
 
