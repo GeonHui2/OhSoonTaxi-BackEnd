@@ -21,7 +21,7 @@
 - Mysql
 - Spring Data JPA
 - Spring Security
-- AWS LightSail
+- Amazon LightSail
 
 
 ## ⚙️ Architecture
