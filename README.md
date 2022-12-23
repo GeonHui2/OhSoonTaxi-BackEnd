@@ -18,7 +18,7 @@
 ## 🛠️ ****Tech Stack****
 
 - Spring Boot
-- Mysql
+- MariaDB
 - Spring Data JPA
 - Spring Security
 - Amazon LightSail
